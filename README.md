@@ -5,6 +5,8 @@
 | **Nama** | Kendrick Filbert |
 | **Email** | kendrickfilbert@gmail.com |
 | **ID Dicoding** | kendrickfff |
+| **Dataset** | Student Performance / Dropout Dataset (4.424 baris, 37 kolom) |
+| **Model** | LightGBM (Hyperparameter Tuned — 50 iterasi, StratifiedKFold 5-fold) |
 
 ---
 
@@ -76,7 +78,7 @@ Dashboard dibuat menggunakan **Looker Studio** untuk memvisualisasikan data maha
 - Tren dropout berdasarkan program studi, usia, dan gender
 
 **Tautan Dashboard:**  
-👉 [Buka Dashboard Looker Studio](https://lookerstudio.google.com/) *(masukkan link dashboard aktif di sini)*
+👉 [Buka Dashboard Looker Studio](https://lookerstudio.google.com/reporting/23f0cb52-5fe1-49ce-ab7c-09fcc8e665d6)
 
 > **Catatan:** Untuk upload data ke Looker Studio, jalankan `pd.py` terlebih dahulu:
 > ```bash
@@ -112,7 +114,7 @@ Aplikasi akan berjalan di `http://localhost:8501`
 | **Download Hasil** | Export hasil prediksi batch ke file CSV untuk tindak lanjut |
 
 **Tautan Aplikasi Streamlit (Cloud):**  
-👉 [Buka Aplikasi Prediksi Dropout](https://jayajaya-dropout-prediction.streamlit.app/) *(masukkan link aktif setelah deploy)*
+👉 [Buka Aplikasi Prediksi Dropout](https://jaya-jaya-institut-dropoutcheck.streamlit.app/)
 
 ---
 
@@ -124,24 +126,37 @@ Berdasarkan seluruh proses analisis dan pemodelan yang dilakukan:
 
 **1. Faktor-faktor dominan yang memengaruhi dropout:**
 
-| Ranking | Faktor | Kategori | Kekuatan Prediksi |
-|---------|--------|----------|------------------|
-| 1 | Jumlah SKS lulus Semester 1 & 2 | Akademik | ⭐⭐⭐⭐⭐ Sangat Tinggi |
-| 2 | Nilai rata-rata Semester 1 & 2 | Akademik | ⭐⭐⭐⭐⭐ Sangat Tinggi |
-| 3 | Status pembayaran SPP (Tuition fees) | Finansial | ⭐⭐⭐⭐ Tinggi |
-| 4 | Status Debitur/Utang | Finansial | ⭐⭐⭐ Sedang |
-| 5 | Usia saat enrollment | Demografis | ⭐⭐⭐ Sedang |
-| 6 | Status beasiswa | Finansial | ⭐⭐ Moderat |
-| 7 | Nilai masuk (Admission grade) | Akademik | ⭐⭐ Moderat |
+Berdasarkan hasil **Feature Importance (Total Gain)** model LightGBM:
+
+| Ranking | Faktor | Kategori | Kekuatan Prediksi | Gain |
+|---------|--------|----------|-------------------|------|
+| 1 | SKS lulus Semester 2 | Akademik | ⭐⭐⭐⭐⭐ Sangat Tinggi | 4,946 (51.3%) |
+| 2 | Nilai rata-rata Semester 2 | Akademik | ⭐⭐⭐⭐⭐ Sangat Tinggi | 1,319 (13.7%) |
+| 3 | SKS lulus Semester 1 | Akademik | ⭐⭐⭐⭐ Tinggi | 952 (9.9%) |
+| 4 | Status pembayaran SPP (Tuition fees) | Finansial | ⭐⭐⭐⭐ Tinggi | 744 (7.7%) |
+| 5 | Usia saat enrollment | Demografis | ⭐⭐⭐ Sedang | 478 (5.0%) |
+| 6 | Nilai masuk (Admission grade) | Akademik | ⭐⭐⭐ Sedang | 444 (4.6%) |
+| 7 | Nilai rata-rata Semester 1 | Akademik | ⭐⭐ Moderat | 347 (3.6%) |
+| 8 | Status beasiswa | Finansial | ⭐⭐ Moderat | 239 (2.5%) |
+| 9 | Status Debitur/Utang | Finansial | ⭐ Rendah | 167 (1.7%) |
+
+**Insight kunci dari EDA:**
+- Mahasiswa yang menunggak SPP memiliki *dropout rate* **86.6%** vs hanya **24.7%** untuk yang lunas — selisih 61.8%
+- Usia rata-rata mahasiswa dropout **26.1 tahun** vs graduate **21.8 tahun**
+- Graduate rata-rata lulus **6.2 SKS** di semester 1, sementara dropout hanya **2.5 SKS**
 
 **2. Performa Model Machine Learning:**
 
-Mahasiswa yang menunggak SPP memiliki *dropout rate* **>70%**, jauh di atas rata-rata 32.1%. Sementara itu, mahasiswa yang lulus kurang dari 3 SKS di semester pertama hampir pasti akan *dropout*.
+Model LightGBM yang telah di-*tuning* berhasil mencapai performa **excellent** di semua metrik:
 
-Model LightGBM yang telah di-*tuning* berhasil mencapai:
-- **Accuracy**: >87%
-- **Recall (Dropout)**: >85% — artinya 85% dari mahasiswa yang sebenarnya dropout berhasil terdeteksi
-- **ROC-AUC**: >0.92 — model sangat baik dalam membedakan Graduate vs Dropout
+| Metrik | Nilai | Interpretasi |
+|--------|-------|--------------|
+| Accuracy | **89.53%** | 9 dari 10 prediksi benar |
+| Recall (Dropout) | **87%** | 87% mahasiswa berisiko berhasil terdeteksi |
+| Precision (Dropout) | **86%** | 86% prediksi dropout terbukti benar |
+| F1-Score | **90%** | Keseimbangan precision-recall sangat baik |
+| ROC-AUC | **0.952** | Classifier excellent (>0.90 = excellent) |
+| Avg Precision | **0.949** | Kurva precision-recall sangat tinggi |
 
 ---
 
