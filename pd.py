@@ -8,17 +8,17 @@ Cara pakai:
     python pd.py
 
 Output:
-    data_looker_studio.csv — siap diupload ke Looker Studio
+    data_looker_studio.csv (boleh direname menjadi data.csv) — siap diupload ke Looker Studio
 """
 
 import pandas as pd
 import os
 
-# ── Konfigurasi ───────────────────────────────────────────────────────────────
+# Konfigurasi
 INPUT_FILE  = 'data.csv'
 OUTPUT_FILE = 'data_looker_studio.csv'
 
-# ── Load & Validasi ───────────────────────────────────────────────────────────
+# Load & Validasi
 if not os.path.exists(INPUT_FILE):
     print(f"❌ File '{INPUT_FILE}' tidak ditemukan.")
     print("   Pastikan Anda menjalankan script ini di direktori yang sama dengan data.csv")
@@ -28,12 +28,12 @@ print(f"📂 Membaca '{INPUT_FILE}'...")
 df = pd.read_csv(INPUT_FILE, sep=';')
 print(f"   ✅ {len(df):,} baris, {len(df.columns)} kolom ditemukan.")
 
-# ── Simpan dengan format koma ─────────────────────────────────────────────────
+# Simpan dengan format koma
 df.to_csv(OUTPUT_FILE, index=False, encoding='utf-8')
 print(f"\n✅ File berhasil dikonversi dan disimpan sebagai '{OUTPUT_FILE}'")
 print(f"   → Siap diupload ke Looker Studio!")
 
-# ── Info ringkas ──────────────────────────────────────────────────────────────
+# Info ringkas
 print(f"\n📊 Ringkasan Data:")
 print(f"   Total mahasiswa : {len(df):,}")
 print(f"   Kolom           : {len(df.columns)}")
